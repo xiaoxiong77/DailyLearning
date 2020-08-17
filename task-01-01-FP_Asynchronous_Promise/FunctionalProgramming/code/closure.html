@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function getSalary (base) {
+            return function (merit) {
+                return base + merit;
+            }
+        }
+
+        let base = getSalary(12000);
+        console.log(base(2000))
+        console.log(base(3000))
+
+    </script>
+</body>
+</html>
