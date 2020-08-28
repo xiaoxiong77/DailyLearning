@@ -67,3 +67,25 @@ test();
 //         a();
 //     }
 // }
+
+
+const obj = {
+    name: 'aaa',
+    age: 18
+};
+
+const objProperty = new Proxy(obj, {
+    get (target, property) {
+        return target[property] ? target[property] : 'undefined';
+    },
+    set (target, property, value) {
+        target[property] = value;
+    },
+    deleteProperty (target, property) {
+        delete target[property];
+    }  
+})
+
+console.log(objProperty.name) // 读
+objProperty.age = 20; // 写
+delete objProperty.name; // 删除
