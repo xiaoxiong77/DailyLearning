@@ -102,6 +102,7 @@ function fn5 (value: any) {
 ```
 
 ## TypeScript
+- https://jkchao.github.io/typescript-book-chinese/typings/generices.html
 ### 安装
 - yarn add typescript
 - 编译：yarn tsc 文件名
