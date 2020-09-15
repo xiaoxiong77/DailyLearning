@@ -8,11 +8,11 @@ module.exports = {
     // 打包模式 development/production/none 
     mode: 'none', 
     // 入口文件
-    entry: './src/index.js', 
+    entry: './src/index.js', // 可相对路径可绝对路径
     // 输出文件
     output: { 
         filename: 'bundle.js',
-        path: path.join(__dirname, 'dist'),
+        path: path.join(__dirname, 'dist'), // 必须是绝对路径
         // publicPath: 'dist/'
     },
     // 集中配置webpack内部优化功能
@@ -54,8 +54,8 @@ module.exports = {
             {
                 test: /.css$/, // 给css文件配置loader后续进行打包
                 use: [
-                    'style-loader',
-                    'css-loader'
+                    'style-loader', // 把CSS文件注入到JavaScript中，通过DOM操作去加载CSS
+                    'css-loader' // 加载CSS，支持模块化、压缩、文件导入等特性
                 ]
             },
             {

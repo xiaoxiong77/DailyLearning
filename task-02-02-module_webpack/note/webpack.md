@@ -222,7 +222,7 @@ module.exports = merge (common, {
 
 ##  Webpack DefinePlugin
 
-## Webpack Tree Shaking 以及 合并模块。
+## Webpack Tree Shaking 以及 合并模块
 
 - 移除代码中未引用的代码
 - 生成环境中打包时会自动开启
@@ -263,3 +263,96 @@ module.exports = {
     }
 }
 ```
+
+## Webpack代码分割
+- 分包，按需加载
+
+### 多入口打包
+```
+module.exports = {
+    entry : {
+        index: './src/index.js',
+        album: './src/index1.js'
+    },
+    output: {
+        filename: '[name].bundle.js'
+    },
+    optimization: {
+        splitChunks: {
+            // 自动提取所有公共模块到单独 bundle
+            chunks: 'all'
+        }
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            title: 'Multi Entry',
+            template: './src/index.html',
+            filename: 'index.html',
+            chunks: ['index'] // 添加chunks属性
+        }),
+        new HtmlWebpackPlugin({
+            title: 'Multi Entry',
+            template: './src/album.html',
+            filename: 'album.html',
+            chunks: ['album']
+        })
+    ]
+}
+```
+
+### 动态导入
+- 需要哪个模块就加载哪个模块
+- 采用import().then()方式处理
+```
+// import posts from './posts/posts'
+// import album from './album/album'
+
+if (hash === '#posts') {
+    // mainElement.appendChild(posts())
+    import(/* webpackChunkName: 'components' */'./posts/posts')
+    .then(({ default: posts }) => {
+        mainElement.appendChild(posts())
+    })
+} else if (hash === '#album') {
+    // mainElement.appendChild(album())
+    import(/* webpackChunkName: 'components' */'./album/album')
+    .then(({ default: album }) => {
+        mainElement.appendChild(album())
+    })
+}
+```
+
+
+## Webpack打包提取css到单独文件
+- yarn add mini-css-extract-plugin
+```
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCssAssetsWebpackPlugin = requir('optimize-css-assets-webpack-plugin')
+const TerserWebpackPlugin = require('terser-webpack-plugin')
+
+module.exports = {
+    optimization: {
+        minimizer: [
+            new TerserWebpackPlugin(), // 压缩js文件
+            new OptimizeCssAssetsWebpackPlugin() // 压缩css文件
+        ]
+    },
+    modules: {
+        rules: [
+            {
+                test: /\.css$/,
+                use: [
+                    // 'style-loader', // 将样式通过 style 标签注入
+                    MiniCssExtractPlugin.loader, // 提取到单独的css文件，通过link引入
+                    'css-loader'
+                ]
+            }
+        ]
+    },
+    plugins: [
+        new MiniCssExtractPlugin()
+    ]
+}
+```
+
+## Webpack输出文件名Hash
