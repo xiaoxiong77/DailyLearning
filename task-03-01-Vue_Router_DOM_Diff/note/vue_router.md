@@ -74,7 +74,7 @@ new Vue({ // 创建 Vue 实例，注册 router 对象
 }).#mount('#app')
 
 ```
-- 具体实现
+- 具体实现（简单版）
 ```
 let _Vue = null
 

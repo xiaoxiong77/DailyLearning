@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        test
+    </div>
+
+    <script>
+        // 模拟Vue中data选项
+        let data = {
+            msg: 'test',
+            count: 100
+        }
+
+        // 模拟Vue实例
+        let vm = new Proxy(data, { // 执行代理行为的函数，当访问vm的成员会执行
+            get (target, key) {
+                return target[key]
+            },
+            set (target, key, newValue) {
+                if (newValue === target[key]) {
+                    return
+                }
+                target[key] = newValue
+                document.getElementById('app').innerHTML = target[key]
+            }
+        })
+
+       
+
+    </script>
+</body>
+</html>
