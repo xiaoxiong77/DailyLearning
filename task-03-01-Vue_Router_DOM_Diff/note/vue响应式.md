@@ -185,3 +185,111 @@ let watcher = new Watcher()
 dep.addSub(watcher)
 dep.notify()
 ```
+
+## Vue
+- 功能
+    - 负责接收初始化的参数（选项）
+    - 负责把data中的属性注入到Vue实例，转换成getter/setter
+    - 负责调用observer监听data中所有属性的变化
+    - 负责调用compiler解析指令/差值表达式
+- 结构
+    - $options【记录构造函数传递的参数】
+    - $el【记录构造函数传递的参数】
+    - $data【记录构造函数传递的参数】
+    - _proxyData()【把data中的属性转换成getter/setter，注入到Vue实例中】
+```
+class Vue {
+    constructor (options) {
+        // 1）通过属性保存选项的数据
+        this.$options = options || {}
+        this.$data = options.data || {}
+        this.$el = typeof options.el === 'string' ? document.querySelector(options.el) : options.el
+
+        // 把data中的成员转换成getter/setter，注入到Vue实例中
+        this._proxyData(this.$data)
+    }
+
+    _proxyData (data) {
+        Object.keys(data).forEach(key => {
+            Object.defineProperty(this, key, {
+                enumerable: true,
+                configurable: true,
+                get () {
+                    return data[key]
+                },
+                set (newValue) {
+                    if (newValue === data[key]) {
+                        return
+                    }
+                    data[key] = newValue
+                }
+            })
+        })
+    }
+}
+```
+
+## Observer
+- 功能
+    - 负责把data选项中的属性转换成响应式数据
+    - data中的某个属性也是对象，把该属性转换成响应式数据
+    - 数据变化发送通知
+- 结构
+    - walk(data)【遍历data中的所有属性】
+    - defineReactive(data,key,value)【定义响应式数据，把属性转换成getter/setter】
+```
+class Observer {
+    constructor (data) {
+        this.walk(data)
+    }
+
+    // 遍历data中所有属性
+    walk (data) {
+        if (!data || typeof data !== 'object') {
+            return
+        }   
+        Object.keys(data).forEach(key => {
+            this.defineReactive(data, key, data[key])
+        })
+    }
+
+    // 把属性转换成getter/setter
+    defineReactive (obj, key, value) {
+        let _this = this;
+        // 如果 val 是对象，继续设置它下面的成员为响应式数据
+        this.walk(value)
+        
+        Object.defineProperty(obj, key, {
+            enumerable: true,
+            configurable: true,
+            get () {
+                return value
+            },
+            set (newValue) {
+                if (newValue === obj[key]) {
+                    return
+                }
+                //如果 newValue 是对象，设置 newValue 的成员为响应式
+                _this.walk(newValue)
+                value = newValue
+            }
+        })
+    }
+}
+```
+
+## Compiler
+- 功能
+    - 负责编译模板，解析指令/差值表达式
+    - 负责页面的首次渲染
+    - 当数据变化后重新渲染视图
+- 结构
+    - el【options里面传递el】
+    - vm【vue的实例】
+    - compile(el)【遍历Dom元素的所有节点，判断节点是文本节点->解析差值表达式，是元素节点->解析指令】
+    - compileElement(node)【解析指令】
+    - compileText(node)【解析差值表达式】
+    - isDirective(attrName)【判断当前属性是否是指令】
+    - isTextNode(node)【判断节点类型】
+    - isElementNode(node)【判断节点类型】
+    
