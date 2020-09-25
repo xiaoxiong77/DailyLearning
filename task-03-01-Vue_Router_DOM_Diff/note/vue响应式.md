@@ -1,4 +1,5 @@
 # Vue.js响应式原理
+- 给vue实例中的data对象动态新增成员时，由于没有经过observer处理，所以改成员不是响应式的
 ## 数据驱动
 - 数据响应式    
     - 数据模型仅仅是普通的JavaScript对象，当修改数据时，视图会进行更新，避免了繁琐的DOM操作，提高开发效率
@@ -11,7 +12,7 @@
 ## 数据响应式的核心原理
 ### Vue 2.x
 - 浏览器兼容IE8以上
-- 基于Object.defineProperty
+- 基于Object.defineProperty()，来劫持对象中的属性，给属性添加setter/getter，每一个属性创建一个dep对象，dep负责收集依赖，在数据变动时dep对象通知watcher对象，watcher内部负责更新视图
 ```
 <!DOCTYPE html>
 <html lang="en">
@@ -62,7 +63,7 @@
 ```
 
 ### Vue 3.x
-- 基于Proxy
+- 基于Proxy代理对象来监听数据的变化，不需要再为每一个属性添加setter/getter
 - 直接监听对象，而非属性
 - ES6中新增，IE不支持，性能由浏览器优化
 ```
@@ -187,6 +188,7 @@ dep.notify()
 ```
 
 ## Vue
+![](./img/vue流程图.jpg)
 - 功能
     - 负责接收初始化的参数（选项）
     - 负责把data中的属性注入到Vue实例，转换成getter/setter
@@ -205,8 +207,14 @@ class Vue {
         this.$data = options.data || {}
         this.$el = typeof options.el === 'string' ? document.querySelector(options.el) : options.el
 
-        // 把data中的成员转换成getter/setter，注入到Vue实例中
+        // 2）把data中的成员转换成getter/setter，注入到Vue实例中
         this._proxyData(this.$data)
+
+        // 3）调用observer对象，监听数据变化
+        new Observer(this.$data)
+
+        // 4）调用compile对象，解析指令和差值表达式
+        new Compiler(this)
     }
 
     _proxyData (data) {
@@ -256,6 +264,9 @@ class Observer {
     // 把属性转换成getter/setter
     defineReactive (obj, key, value) {
         let _this = this;
+        // 负责收集依赖并发送通知
+        let dep = new Dep()
+
         // 如果 val 是对象，继续设置它下面的成员为响应式数据
         this.walk(value)
         
@@ -263,6 +274,7 @@ class Observer {
             enumerable: true,
             configurable: true,
             get () {
+                Dep.target && dep.addSub(Dep.target) // 收集依赖
                 return value
             },
             set (newValue) {
@@ -272,6 +284,9 @@ class Observer {
                 //如果 newValue 是对象，设置 newValue 的成员为响应式
                 _this.walk(newValue)
                 value = newValue
+
+                // 发送通知
+                dep.notify()
             }
         })
     }
@@ -292,4 +307,175 @@ class Observer {
     - isDirective(attrName)【判断当前属性是否是指令】
     - isTextNode(node)【判断节点类型】
     - isElementNode(node)【判断节点类型】
+```
+class Compiler {
+    constructor (vm) {
+        this.el = vm.$el
+        this.vm = vm
+        this.compile(this.el)
+    }
+
+    // 编译模板，处理文本节点和元素节点
+    compile (el) {
+        let childNodes = el.childNodes
+        Array.from(childNodes).forEach(node => {
+            if (this.isTextNode(node)) { // 处理文本节点
+                this.compileText(node)
+            } else if (this.isElementNode(node)) { // 处理元素节点
+                this.compileElement(node)
+            }
+
+            // 判断node节点是否有子节点，如果有，则递归调用compile
+            if (node.childNodes && node.childNodes.length) {
+                this.compile(node)
+            }
+        })
+    }
+
+    // 编译元素节点，处理指令
+    compileElement (node) {
+        // 遍历所有的属性节点，判断是否为指令->
+        Array.from(node.attributes).forEach(attr => {
+            let attrName = attr.name
+            if (attrName && this.isDirective(attrName)) {
+                // v-text --> text v-model --> model
+                attrName = attrName.substr(2)
+                let key = attr.value
+                this.update(node, key, attrName)
+            }
+        })
+    }
+
+    update (node, key, attrName) {
+        let updateFn = this[attrName + 'Updater']
+        updateFn && updateFn.call(this, node, this.vm[key], key)
+    }
+
+    // 处理v-text指令
+    textUpdater (node, value, key) {
+        node.textContent = value
+
+        // 创建watcher对象，当数据改变时更新视图
+        new Watcher(this.vm, key, (newValue) => {
+            node.textContent = newValue
+        })
+    }
+
+    // 处理v-model指令
+    modelUpdater(node, value, key) {
+        node.value = value
+
+        // 创建watcher对象，当数据改变时更新视图
+        new Watcher(this.vm, key, (newValue) => {
+            node.value = newValue
+        })
+
+        // 双向绑定，给元素绑定input事件，当视图value改变时-->改变vm中对用key的值
+        node.addEventListener('input', () => {
+            this.vm[key] = node.value
+        })
+    }
+
+    // 编译文本节点，处理差值表达式
+    compileText (node) {
+        // {{ msg }}
+        let reg = /\{\{(.+?)\}\}/
+        let value = node.textContent
+        if (reg.test(value)) {
+            let key = RegExp.$1.trim()
+            node.textContent = value.replace(reg, this.vm[key])
+
+            // 创建watcher对象，当数据改变时更新视图
+            new Watcher(this.vm, key, (newValue) => {
+                node.textContent = newValue
+            })
+        }
+    } 
+
+    // 判断元素属性是否是指令
+    isDirective (attrName) {
+        return attrName.startsWith('v-')
+    }
+
+    // 判断节点是否是文本节点
+    isTextNode (node) {
+        return node.nodeType === 3
+    }
+
+    // 判断节点是否是元素节点
+    isElementNode (node) {
+        return node.nodeType === 1
+    }
+}
+```
+
+## Dep(Dependency)
+![](./img/vue.jpg)
+- 功能
+    - 手机依赖，添加观察者（watcher）
+    - 通知所有观察者
+- 结构
+    - subs【存储所有watcher】
+    - addSub(sub)【添加watcher】
+    - notify()【发布通知】
+```
+class Dep {
+    constructor () {
+        this.subs = [] // 存储所有观察者
+    }
+
+    // 添加观察者
+    addSub (sub) {
+        if (sub && sub.update) {
+            this.subs.push(sub)
+        }
+    }
+
+    // 发布通知
+    notify () {
+        this.subs.forEach(sub => {
+            sub.update()
+        })
+    }
+}
+```
+
+## Watcher
+![](./img/watcher.jpg)
+- 功能
+    - 当数据变化触发依赖，dep通知所有的watcher实例更新视图
+    - 自身实例化的时候往dep对象中添加自己
+- 结构
+    - vm【vue实例】
+    - key【data里属性名称】
+    - cb【回调函数，指明如何更新视图】
+    - oldValue【数据变化之前的值】
+    - update()【更新视图】
+```
+class Watcher {
+    constructor (vm, key, cb) {
+        this.vm = vm; // vue实例
+        this.key = key; // data里的属性名称
+        this.cb = cb; // 回调函数，指明如何更新视图
+
+        // 将Watcher对象记录到Dep类的静态属性target
+        // 触发get方法，在get方法中会调用addSub
+        // 将Dep.target设为空，防止重复添加
+        Dep.target = this;
+
+        this.oldValue = vm[key]
+
+        Dep.target = null
+    }
+
+    // 当数据发生变化的时候去更新视图
+    update () {
+        let newValue = this.vm[this.key]
+        if (newValue === this.oldValue) {
+            return
+        }
+        this.cb(newValue)
+    }
+}
+```
     

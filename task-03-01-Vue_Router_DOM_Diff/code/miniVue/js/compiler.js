@@ -38,17 +38,32 @@ class Compiler {
 
     update (node, key, attrName) {
         let updateFn = this[attrName + 'Updater']
-        updateFn && updateFn(node, this.vm[key])
+        updateFn && updateFn.call(this, node, this.vm[key], key)
     }
 
     // 处理v-text指令
-    textUpdater (node, value) {
+    textUpdater (node, value, key) {
         node.textContent = value
+
+        // 创建watcher对象，当数据改变时更新视图
+        new Watcher(this.vm, key, (newValue) => {
+            node.textContent = newValue
+        })
     }
 
     // 处理v-model指令
-    modelUpdater(node, value) {
+    modelUpdater(node, value, key) {
         node.value = value
+
+        // 创建watcher对象，当数据改变时更新视图
+        new Watcher(this.vm, key, (newValue) => {
+            node.value = newValue
+        })
+
+        // 双向绑定，给元素绑定input事件，当视图value改变时-->改变vm中对用key的值
+        node.addEventListener('input', () => {
+            this.vm[key] = node.value
+        })
     }
 
     // 编译文本节点，处理差值表达式
@@ -59,6 +74,11 @@ class Compiler {
         if (reg.test(value)) {
             let key = RegExp.$1.trim()
             node.textContent = value.replace(reg, this.vm[key])
+
+            // 创建watcher对象，当数据改变时更新视图
+            new Watcher(this.vm, key, (newValue) => {
+                node.textContent = newValue
+            })
         }
     } 
 
