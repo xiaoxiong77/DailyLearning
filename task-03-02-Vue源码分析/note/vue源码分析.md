@@ -90,3 +90,142 @@ const vm = new Vue({
   return mount.call(this, el, hydrating)
 }
 ```
+
+## Vue 初始化
+### 四个导出 Vue 的模块
+#### src/platform/web/entry-runtime-with-compiler.js 
+- web 平台相关的入口
+- 重写了平台相关的 $mount() 方法
+- 注册了 Vue.compile() 方法，传递一个 HTML 字符串返回 render 函数
+- 引用了'./runtime/index'
+
+#### src/platform/web/runtime/index.js
+- web 平台相关
+- 注册和平台相关的全局指令：v-model、v-show
+- 注册和平台相关的全局组件：v-transition、v-transition-group
+- 全局方法：
+    - __patch__：把虚拟 DOM 转换成真实 DOM
+    - $mount：挂载 DOM 方法
+    - 设置 Vue.config
+- 引用了'core/index'
+```
+// install platform runtime directives & components
+extend(Vue.options.directives, platformDirectives)
+extend(Vue.options.components, platformComponents)
+
+// install platform patch function
+Vue.prototype.__patch__ = inBrowser ? patch : noop
+
+// public mount method
+Vue.prototype.$mount = function (
+  el?: string | Element,
+  hydrating?: boolean
+): Component {
+  el = el && inBrowser ? query(el) : undefined
+  return mountComponent(this, el, hydrating)
+}
+```
+
+#### src/core/index.js
+- 与平台无关
+- 设置了 Vue 的静态方法，initGlobalAPI(Vue)
+- 引用了'./instance/index'
+
+#### src/core/instance/index.js
+- 与平台无关
+- 定义了构造函数，调用了 this._init(options) 方法
+- 给 Vue 中混入了常用的实例成员
+```
+// 此处不用 class 的原因是因为方便后续给 Vue 实例混入实例成员
+function Vue (options) {
+  if (process.env.NODE_ENV !== 'production' &&
+    !(this instanceof Vue)
+  ) {
+    warn('Vue is a constructor and should be called with the `new` keyword')
+  }
+  // 调用 _init() 方法
+  this._init(options)
+}
+// 注册 vm 的 _init() 方法，初始化 vm
+initMixin(Vue)
+// 注册 vm 的 $data/$props/$set/$delete/$watch
+stateMixin(Vue)
+// 初始化事件相关方法
+// $on/$once/$off/$emit
+eventsMixin(Vue)
+// 初始化生命周期相关的混入方法
+// _update/$forceUpdate/$destroy
+lifecycleMixin(Vue)
+// 混入 render
+// $nextTick/_render
+renderMixin(Vue)
+```
+
+### Vue 初始化-静态成员
+- src/core/global-api/index.js
+  - 初始化 Vue 的静态方法
+```
+export function initGlobalAPI (Vue: GlobalAPI) {
+  // config
+  const configDef = {}
+  configDef.get = () => config
+  if (process.env.NODE_ENV !== 'production') {
+    configDef.set = () => {
+      warn(
+        'Do not replace the Vue.config object, set individual fields instead.'
+      )
+    }
+  }
+  // 初始化 Vue.config 对象
+  Object.defineProperty(Vue, 'config', configDef)
+
+  // exposed util methods.
+  // NOTE: these are not considered part of the public API - avoid relying on
+  // them unless you are aware of the risk.
+  // 这些工具方法不视作全局API的一部分，除非你已经意识到某些风险，否则不要去依赖他们
+  Vue.util = {
+    warn,
+    extend,
+    mergeOptions,
+    defineReactive
+  }
+  // 静态方法 set/delete/nextTick
+  Vue.set = set
+  Vue.delete = del
+  Vue.nextTick = nextTick
+
+  // 2.6 explicit observable API
+  // 让一个对象可响应
+  Vue.observable = <T>(obj: T): T => {
+    observe(obj)
+    return obj
+  }
+  // 初始化 Vue.options 对象，并给其扩展
+  // components/directives/filters
+  Vue.options = Object.create(null)
+  ASSET_TYPES.forEach(type => {
+    Vue.options[type + 's'] = Object.create(null)
+  })
+
+  // this is used to identify the "base" constructor to extend all plain-object
+  // components with in Weex's multi-instance scenarios.
+  Vue.options._base = Vue
+
+  // 设置 keep-alive 组件
+  extend(Vue.options.components, builtInComponents)
+
+  // 注册 Vue.use() 用来注册插件
+  initUse(Vue)
+  // 注册 Vue.mixin() 实现混入
+  initMixin(Vue)
+  // 注册 Vue.extend() 基于传入的options返回一个组件的构造函数
+  initExtend(Vue)
+  // 注册 Vue.directive()、 Vue.component()、Vue.filter()
+  initAssetRegisters(Vue)
+}
+```
+
+## Vue首次渲染过程
+![](./images/vue首次渲染过程.png)
+
+## 数据响应式原理
