@@ -1,0 +1,44 @@
+[
+  {
+    "name": "about",
+    "path": "/about",
+    "component": "/work/amy_study/DailyLearning/task-03-03-Vuex_SSR/code/Nuxt_demo/pages/about.vue",
+    "chunkName": "pages/about",
+    "_name": "_88865a42"
+  },
+  {
+    "path": "/user",
+    "component": "/work/amy_study/DailyLearning/task-03-03-Vuex_SSR/code/Nuxt_demo/pages/user.vue",
+    "chunkName": "pages/user",
+    "children": [
+      {
+        "name": "user",
+        "path": "",
+        "component": "/work/amy_study/DailyLearning/task-03-03-Vuex_SSR/code/Nuxt_demo/pages/user/index.vue",
+        "chunkName": "pages/user/index",
+        "_name": "_18c03a2c"
+      },
+      {
+        "name": "user-id",
+        "path": ":id",
+        "component": "/work/amy_study/DailyLearning/task-03-03-Vuex_SSR/code/Nuxt_demo/pages/user/_id.vue",
+        "chunkName": "pages/user/_id",
+        "_name": "_792ed794"
+      }
+    ],
+    "_name": "_6409e669"
+  },
+  {
+    "name": "index",
+    "path": "/",
+    "component": "/work/amy_study/DailyLearning/task-03-03-Vuex_SSR/code/Nuxt_demo/pages/index.vue",
+    "chunkName": "pages/index",
+    "_name": "_4916a4b8"
+  },
+  {
+    "name": "hello",
+    "path": "/hello",
+    "component": "/work/amy_study/DailyLearning/task-03-03-Vuex_SSR/code/Nuxt_demo/pages/about.vue",
+    "_name": "_88865a42"
+  }
+]
