@@ -1,0 +1,51 @@
+[
+  {
+    "path": "/",
+    "component": "/work/amy_study/DailyLearning/task-03-03-Vuex_SSR/code/Nuxt_realword/pages/layout",
+    "children": [
+      {
+        "path": "",
+        "name": "home",
+        "component": "/work/amy_study/DailyLearning/task-03-03-Vuex_SSR/code/Nuxt_realword/pages/home",
+        "_name": "_e8608600"
+      },
+      {
+        "path": "/login",
+        "name": "login",
+        "component": "/work/amy_study/DailyLearning/task-03-03-Vuex_SSR/code/Nuxt_realword/pages/login",
+        "_name": "_233fa930"
+      },
+      {
+        "path": "/register",
+        "name": "register",
+        "component": "/work/amy_study/DailyLearning/task-03-03-Vuex_SSR/code/Nuxt_realword/pages/login",
+        "_name": "_233fa930"
+      },
+      {
+        "path": "/profile/:username",
+        "name": "profile",
+        "component": "/work/amy_study/DailyLearning/task-03-03-Vuex_SSR/code/Nuxt_realword/pages/profile",
+        "_name": "_9fac7c30"
+      },
+      {
+        "path": "/settings",
+        "name": "settings",
+        "component": "/work/amy_study/DailyLearning/task-03-03-Vuex_SSR/code/Nuxt_realword/pages/settings",
+        "_name": "_3362e878"
+      },
+      {
+        "path": "/editor",
+        "name": "editor",
+        "component": "/work/amy_study/DailyLearning/task-03-03-Vuex_SSR/code/Nuxt_realword/pages/editor",
+        "_name": "_5dcd3564"
+      },
+      {
+        "path": "/article/:slug",
+        "name": "article",
+        "component": "/work/amy_study/DailyLearning/task-03-03-Vuex_SSR/code/Nuxt_realword/pages/article",
+        "_name": "_d217f596"
+      }
+    ],
+    "_name": "_462f81ea"
+  }
+]
