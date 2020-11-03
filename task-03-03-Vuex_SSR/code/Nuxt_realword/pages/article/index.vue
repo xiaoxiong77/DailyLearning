@@ -154,7 +154,7 @@
 
 <script>
 export default {
-  name: "Article"
+    name: "Article"
 };
 </script>
 
