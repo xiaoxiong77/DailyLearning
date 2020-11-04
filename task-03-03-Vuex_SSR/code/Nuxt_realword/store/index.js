@@ -19,13 +19,14 @@ export const actions = {
     // nuxtServerInit 是一个特殊的 action 方法，会在服务端渲染期间自动调用
     // 作用：初始化容器数据；传递数据给客户端使用
     nuxtServerInit ({ commit }, { req }) {
+        console.log('nuxtServerInit===')
         let user = null
         // 如果请求头里有 Cookie
         if (req.headers.cookie) {
             // 使用 cookieparser 把 cookie 字符串转换成对象
             const parsed = cookieparser.parse(req.headers.cookie)
             try {
-                user = JSON.parse(parsed.auth)
+                user = JSON.parse(parsed.user)
             } catch (err) {
                 // No valid cookie found
             }
