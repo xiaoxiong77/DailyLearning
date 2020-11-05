@@ -53,5 +53,9 @@ export default {
                 ]
             )
         }
-    }
+    },
+    plugins: [
+        '~/plugins/request.js',
+        '~/plugins/dayjs.js'
+    ]
 }

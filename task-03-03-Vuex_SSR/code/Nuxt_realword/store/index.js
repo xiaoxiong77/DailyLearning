@@ -31,6 +31,7 @@ export const actions = {
                 // No valid cookie found
             }
         }
+        console.log('nuxtServerInit--user---', user)
         commit('setUser', user)
       }
 }

@@ -96,13 +96,15 @@
                                     >
                                         {{ article.author.username }}
                                     </nuxt-link>
-                                    <span class="date">{{ article.createdAt}}</span>
+                                    <span class="date">{{ article.createdAt | date('MMM DD, YYYY')}}</span>
                                 </div>
                                 <button 
                                     class="btn btn-outline-primary btn-sm pull-xs-right"
                                     :class="{
                                         active: article.favorited
                                     }"
+                                    @click="onFavorite(article)"
+                                    :disabled="article.favoriteDisable"
                                 >
                                     <i class="ion-heart"></i> {{ article.favoritesCount }}
                                 </button>
@@ -179,20 +181,22 @@
 </template>
 
 <script>
-import { getArticles } from '@/api/article'
+import { getArticles, getFeedArticles, addFavorite, deleteFavorite } from '@/api/article'
 import { getTags } from '@/api/tag'
 import { mapState } from 'vuex'
 
 export default {
     name: "HomePage",
-    async asyncData ({ query }) {
+    async asyncData ({ query, store }) {
         const page = Number.parseInt(query.page || 1)
         const limit = 5
         const { tag } = query
+        const tab = query.tab || 'global_feed'
+        const isGetArticles = (store.state.user && tab === 'your_feed') ? getFeedArticles : getArticles
 
         const [ articlesRes, tagRes ] = await Promise.all([
             // 获取文章列表
-            getArticles({
+            isGetArticles({
                 limit,
                 offset: (page - 1) * limit,
                 tag
@@ -204,6 +208,8 @@ export default {
         const { articles, articlesCount} = articlesRes.data
         const { tags } = tagRes.data
 
+        articles.forEach(article => article.favoriteDisable = false)
+
         return {
             articles,
             articlesCount,
@@ -211,7 +217,7 @@ export default {
             page,
             tags,
             tag,
-            tab: query.tab || 'global_feed'
+            tab
         }   
     },
     watchQuery: ['page', 'tag', 'tab'], // 监听参数字符串更改并在更改时执行组件方法
@@ -219,6 +225,23 @@ export default {
         ...mapState(['user']),
         totalPage () {
             return Math.ceil(this.articlesCount / this.limit)
+        }
+    },
+    methods: {
+        async onFavorite (article) {
+            article.favoriteDisable = true
+            if (article.favorited) {
+                // 取消点赞
+                await deleteFavorite(article.slug)
+                article.favorited = false
+                article.favoritesCount += -1
+            } else {
+                // 添加点赞
+                await addFavorite(article.slug)
+                article.favorited = true
+                article.favoritesCount += 1
+            }
+            article.favoriteDisable = false
         }
     }
 }

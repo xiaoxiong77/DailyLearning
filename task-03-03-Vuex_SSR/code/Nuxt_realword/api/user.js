@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import { request } from '@/plugins/request'
 
 // 登录接口
 export const login = (data) => {
