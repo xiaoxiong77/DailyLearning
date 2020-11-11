@@ -189,7 +189,7 @@ export default {
     name: "HomePage",
     async asyncData ({ query, store }) {
         const page = Number.parseInt(query.page || 1)
-        const limit = 5
+        const limit = 20
         const { tag } = query
         const tab = query.tab || 'global_feed'
         const isGetArticles = (store.state.user && tab === 'your_feed') ? getFeedArticles : getArticles
