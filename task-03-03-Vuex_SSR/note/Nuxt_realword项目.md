@@ -6,6 +6,48 @@
 - 页面模板：https://github.com/gothinkster/realworld-starter-kit/blob/master/FRONTEND_INS
 TRUCTIONS.md
 
+
+## 发布部署
+### 使用命令打包
+- https://zh.nuxtjs.org/guide/commands
+- nuxt
+    - 启动一个热加载的 Web 服务器（开发模式） localhost:3000
+- nuxt build
+    - 利用 webpack 编译应用，压缩 JS 和 CSS 资源（发布用）
+- nuxt start
+    - 以生产模式启动一个 Web 服务器 (需要先执行nuxt build)
+- nuxt generate
+    - 编译应用，并依据路由配置生成对应的 HTML 文件 (用于静态站点的部署)
+
+### 最简单的部署方式
+- 配置Host + Port
+```
+// nuxt.config.js
+server: {
+    host: '0.0.0.0',// 监听所有外网地址。在生产环境服务器上外网环境就能访问到了，在本地的话，局域网都能访问到了
+    port: 3000
+}
+```
+- 压缩发布包
+    - .nuxt文件夹（Nuxt打包生成的资源文件）
+    - static文件夹（项目中的静态资源）
+    - nuxt.config.js（给Nuxt服务来使用的）
+    - package.json （因为在服务端要安装第三方包）
+    - yarn.lock（因为在服务端要安装第三方包）
+- 将发布包传到服务端
+    - 登录服务器：ssh root@118.25.24.162
+    - 选择一个目录创建一个 nuxt-realword 文件夹：mkdir nuxt-realword
+    - cd nuxt-realword 进入该文件夹， 然后使用 pwd 打印当前文件夹路径
+    - 回到本地，使用 scp 命令往服务器传压缩包：scp 本地文件路径 root@118.25.24.162:服务端文件夹路径
+- 解压
+    - 回到服务器的 nuxt-realword 文件夹里，此时已经有了一个 nuxt-realword.zip 文件，执行unzip nuxt-realword.zip 对压缩包解压
+    - 然后使用 ls -a 查看解压后的所有文件
+- 安装依赖
+    - npm install
+- 启动服务
+    - npm run start
+    - 访问 118.25.24.162:3000
+
 ## 项目初始化
 - 新建项目文件
 - npm init -y 初始化 package.json

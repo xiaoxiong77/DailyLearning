@@ -6,38 +6,46 @@
       {
         "path": "",
         "name": "home",
-        "component": "D:\\\\小熊-myself\\\\DailyLearning\\\\DailyLearning\\\\task-03-03-Vuex_SSR\\\\code\\\\Nuxt_realword\\\\pages\\\\home"
+        "component": "D:\\\\小熊-myself\\\\DailyLearning\\\\DailyLearning\\\\task-03-03-Vuex_SSR\\\\code\\\\Nuxt_realword\\\\pages\\\\home",
+        "_name": "_48f30a7b"
       },
       {
         "path": "/login",
         "name": "login",
-        "component": "D:\\\\小熊-myself\\\\DailyLearning\\\\DailyLearning\\\\task-03-03-Vuex_SSR\\\\code\\\\Nuxt_realword\\\\pages\\\\login"
+        "component": "D:\\\\小熊-myself\\\\DailyLearning\\\\DailyLearning\\\\task-03-03-Vuex_SSR\\\\code\\\\Nuxt_realword\\\\pages\\\\login",
+        "_name": "_54b2e566"
       },
       {
         "path": "/register",
         "name": "register",
-        "component": "D:\\\\小熊-myself\\\\DailyLearning\\\\DailyLearning\\\\task-03-03-Vuex_SSR\\\\code\\\\Nuxt_realword\\\\pages\\\\login"
+        "component": "D:\\\\小熊-myself\\\\DailyLearning\\\\DailyLearning\\\\task-03-03-Vuex_SSR\\\\code\\\\Nuxt_realword\\\\pages\\\\login",
+        "_name": "_54b2e566"
       },
       {
         "path": "/profile/:username",
         "name": "profile",
-        "component": "D:\\\\小熊-myself\\\\DailyLearning\\\\DailyLearning\\\\task-03-03-Vuex_SSR\\\\code\\\\Nuxt_realword\\\\pages\\\\profile"
+        "component": "D:\\\\小熊-myself\\\\DailyLearning\\\\DailyLearning\\\\task-03-03-Vuex_SSR\\\\code\\\\Nuxt_realword\\\\pages\\\\profile",
+        "_name": "_414182e6"
       },
       {
         "path": "/settings",
         "name": "settings",
-        "component": "D:\\\\小熊-myself\\\\DailyLearning\\\\DailyLearning\\\\task-03-03-Vuex_SSR\\\\code\\\\Nuxt_realword\\\\pages\\\\settings"
+        "component": "D:\\\\小熊-myself\\\\DailyLearning\\\\DailyLearning\\\\task-03-03-Vuex_SSR\\\\code\\\\Nuxt_realword\\\\pages\\\\settings",
+        "_name": "_c46eb882"
       },
       {
         "path": "/editor",
         "name": "editor",
-        "component": "D:\\\\小熊-myself\\\\DailyLearning\\\\DailyLearning\\\\task-03-03-Vuex_SSR\\\\code\\\\Nuxt_realword\\\\pages\\\\editor"
+        "component": "D:\\\\小熊-myself\\\\DailyLearning\\\\DailyLearning\\\\task-03-03-Vuex_SSR\\\\code\\\\Nuxt_realword\\\\pages\\\\editor",
+        "_name": "_5ac17fee"
       },
       {
         "path": "/article/:slug",
         "name": "article",
-        "component": "D:\\\\小熊-myself\\\\DailyLearning\\\\DailyLearning\\\\task-03-03-Vuex_SSR\\\\code\\\\Nuxt_realword\\\\pages\\\\article"
+        "component": "D:\\\\小熊-myself\\\\DailyLearning\\\\DailyLearning\\\\task-03-03-Vuex_SSR\\\\code\\\\Nuxt_realword\\\\pages\\\\article",
+        "_name": "_73acfc4c"
       }
-    ]
+    ],
+    "_name": "_4323cc74"
   }
 ]
