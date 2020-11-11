@@ -48,6 +48,82 @@ server: {
     - npm run start
     - 访问 118.25.24.162:3000
 
+### 使用 pm2 启动服务
+- https://pm2.io
+- https://github.com/Unitech/pm2
+- 生产环境安装：npm install --global pm2
+- 启动服务：pm2 start 脚本路径
+    - 即：pm2 start npm -- start
+    - 访问 118.25.24.162:3000
+- pm2 常用命令
+    - pm2 list 查看应用列表
+    - pm2 start 启动应用
+    - pm2 stop 停止应用
+    - pm2 reload 重载应用
+    - pm2 restart 重启应用
+    - pm2 delete 删除应用
+
+### 自动部署
+#### 传统的部署方式
+- 更新
+    - 本地构建
+    - 发布
+- 更新
+    - 本地构建
+    - 发布
+- …
+
+#### 现代化部署方式（CI/CD）
+![](./images/现代化部署方式.jpg)
+
+### 使用GitHub Actions 实现自动部署
+- 环境准备
+    - Linux服务器
+    - 把代码提交到GitHub远程仓库
+    - 先在GitHub上建一个仓库，将本地代码提交到仓库里
+    ```
+    echo "# realworld-nuxtjs" >> README.md
+    git init
+    echo node_modules > .gitignore
+    git add .
+    git commit -m "first commit"
+    git remote add origin git@github.com:2604150210/realworld-nuxtjs.git
+    git push -u origin master
+    ```
+- 配置GitHub Access Token
+    - 生成：https://github.com/settings/tokens
+        - 头像 -> Settings -> Developer settings -> Personal access tokens -> Generate new Token Token名称填写Tocken，
+        Select scopes勾选repo，然后滚动到网页最下面点击提交按钮。生成了Token
+- 配置到项目的Secrets中
+    - Settings -> Secrets -> New Secrets
+- 配置GitHub Actions执行脚本
+    - 在项目根目录创建.github/workflows目录
+    - 下载main.yml到workflows目录中：https://github.com/lipengzhou/realworld-nuxtjs/edit/master/.github/workflows/main.yml
+    - 修改配置 main.ym
+        - 修改对应的服务器路径
+        - wget后面的下载地址改为自己的仓库地址
+        - 项目的Secrets，配置HOST、USERNAME、PASSWORD、PORT
+- 配置PM2配置文件 pm2.config.json
+```
+{
+  "apps": [
+    {
+      "name": "RealWorld",
+      "script": "npm",
+      "args": "start"
+    }
+  ]
+}
+```
+- 提交更新
+    - git add .
+    - git commit -m"第一次发布部署-测试"
+    - git push （此时只是推送了提交记录，并不会触发自动化构建）
+    - git add .
+    - git tag v0.1.0 （通过tag打版）
+    - git tag （查看版本）
+    - git push origin v0.1.0 （把本地标签推送到远程仓库，会触发自动构建）
+
 ## 项目初始化
 - 新建项目文件
 - npm init -y 初始化 package.json
