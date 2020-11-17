@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function red(){
+            console.log('red')
+        }
+        function green(){
+            console.log('green')
+        }
+        function yellow(){
+            console.log('yellow')
+        }
+
+        const lightFn = (fn, timer) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    fn()
+                    resolve()
+                }, timer)
+            })
+        }
+
+        const cycleFn = () => {
+            Promise.resolve().then(() => {
+                return lightFn(red, 3000)
+            }).then(() => {
+                return lightFn(green, 1000)
+            }).then(() => {
+                return lightFn(yellow, 2000)
+            }).then(() => {
+                cycleFn()
+            })
+        }
+
+        cycleFn()
+    </script>
+</body>
+</html>
