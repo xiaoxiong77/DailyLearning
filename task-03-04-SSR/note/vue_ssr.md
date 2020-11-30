@@ -150,3 +150,5 @@ renderer.renderToString(app, {
   })
 
 ```
+## 构建配置
+![](./images/渲染.png)
