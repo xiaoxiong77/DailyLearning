@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+
+        // 案例1
+        function * fn () {
+            console.log('start') // 1) start
+            yield 111
+            console.log('continue') // 3) continue
+            yield 222
+            console.log('end') // 5) end
+        }
+        const generatorFn = fn()
+        console.log(generatorFn.next()) // 2) {value: 111, done: false}
+        console.log(generatorFn.next()) // 4) {value: 222, done: false}
+        console.log(generatorFn.next()) // 6) {value: undefined, done: true}
+
+        // 案例2
+        function * foo () {
+            console.log('start')
+
+            try {
+                const res = yield 'foo'
+                console.log(res) // 2) 'bar'
+            } catch (e) {
+                console.log(e)
+            }
+        }
+
+        const generator = foo()
+
+        const result = generator.next() 
+        console.log(result) // 1) start  {value: 'foo', done: false}
+
+        generator.next('bar') 
+
+
+    </script>
+</body>
+</html>
