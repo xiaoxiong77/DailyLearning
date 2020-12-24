@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    <script src="./Promise_08all-resolve方法.js"></script>
+    <script src="./Promise_08all-race-resolve-finally方法.js"></script>
     <script>
 
         // // 基本使用
@@ -99,22 +99,24 @@
         //     console.log('error', error)
         // })
 
-        // const p1 = () => {
-        //     return new MyPromise((resolve, reject) => {
-        //         setTimeout(() => {
-        //             resolve('p1')
-        //         }, 1000)
-        //     })
-        // }
+        const p1 = () => {
+            return new MyPromise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve('p1')
+                }, 1000)
+            })
+        }
         const p2 = () => {
             return new MyPromise((resolve, reject) => {
                 resolve('p2')
             })
         }
         // MyPromise.all(['a', 'b', p1(), p2(), 'c']).then(value => console.log(value))
+        MyPromise.race([p2(), p1()]).then(value => console.log(value))
 
-        MyPromise.resolve('1').then(value => console.log(value))
-        MyPromise.resolve(p2()).then(value => console.log(value))
+
+        // MyPromise.resolve('1').then(value => console.log(value))
+        // MyPromise.resolve(p2()).then(value => console.log(value))
 
     </script>
 </body>

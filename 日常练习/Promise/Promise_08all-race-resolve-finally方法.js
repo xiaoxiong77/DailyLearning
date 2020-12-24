@@ -10,7 +10,9 @@
     5）then 成功回调有一个参数，表示成功之后的值
        then 失败回调有一个参数，表示失败的原因
     6）异步逻辑/ then 方法多次调用的实现：需要一个变量存储回调函数，然后统一依次调用
-    7）then 方法链式调用，那么每一个then 方法都需要返回一个 Promise
+    7）then 方法链式调用，那么每一个 then 方法都需要返回一个 Promise
+    8) all 方法，传入数组，返回一个 Promise，等所有的有结果才会统一返回最终结果数组，只要有一个失败，最终结果就会返回失败
+    9) race 方法，传入数组，返回一个 Promise，只要有一个结果成功或失败，那么立马返回最终结果
 */
 
 // 三个状态
@@ -144,14 +146,14 @@ class MyPromise {
     }
 
     static all (array) {
+        if (!Array.isArray(array)) throw('参数必须为数组')
+
         let result = []
         let index = 0
-        
         return new MyPromise((resolve, reject) => {
 
             function addData (key, value) {
                 result[key] = value
-                console.log('index---', index, result)
                 index ++
                 if (index === array.length) {
                     resolve(result)
@@ -169,6 +171,20 @@ class MyPromise {
                 } else { // 普通值
                     addData(i, current)
                 }
+            }
+        })
+    }
+
+    static race (array) {
+        return new MyPromise((resolve, reject) => {
+            if (!Array.isArray(array)) throw('参数必须为数组')
+            for (let i = 0; i < array.length; i++) {
+                let current = array[i]
+                MyPromise.resolve(current).then(value => {
+                    resolve(value)
+                }, error => {
+                    reject(error)
+                })
             }
         })
     }
