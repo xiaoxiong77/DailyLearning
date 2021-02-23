@@ -1,3 +1,8 @@
+<!--
+ * @Author: wukangjun
+ * @Date: 2020-11-17 20:43:48
+ * @Description: write something
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,6 +44,16 @@
         }
 
         cycleFn()
+
+        
+
+        const stringCount = str => {
+            return str.match(/(\w)\1*/g).reduce((a, b) => {
+                return b.length === 1 ? [...a, b] : [...a, b.length + b[0]]
+            }, [])
+        }
+
+        console.log(stringCount('aa2222b'))// ["a2", "24", "b"]
     </script>
 </body>
 </html>
