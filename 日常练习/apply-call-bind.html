@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // const obj = {
+        //     nameA: '小熊',
+        //     age: 18
+        // }
+        // function fn (fromArea, toArea) {
+        //     console.log("姓名 " + this.nameA + ' 年龄 ' + this.age, " 来自" + fromArea + "去往" + toArea)
+        // }
+
+        // // 【this指向window】
+        // fn() // 姓名 undefined 年龄 undefined  来自undefined去往undefined
+
+        // // 【this指向obj】
+        // fn.apply(obj, ['安徽', '上海']) // 姓名 小熊 年龄 18  来自安徽去往上海
+        // fn.call(obj, '安徽', '上海')   // 姓名 小熊 年龄 18  来自安徽去往上海
+
+        // // bind 方法返回的是函数
+        // let bind = fn.bind(obj, '安徽') 
+        // bind('上海')  // 姓名 小熊 年龄 18  来自安徽去往上海
+
+        // fn.bind(obj, '安徽', '上海')() 
+
+        /*
+         * 实现 bind 方法
+         * 函数的参数可以一次传入，也可以分次传入
+        */
+        Function.prototype.myBind = function (context, ...args) {
+            // 判断调用对象是否为函数
+            if (typeof this !== 'function') {
+                throw new TypeError('Error')
+            }
+
+            // 保存 this，即调用 bind 方法的目标函数
+            fn = this
+
+            return function Fn(...rest) {
+                // 如果参数是分次传入，合并参数
+                const finalArgs = [...args, ...rest]
+                // 最后调用 apply 方法
+                return fn.apply(context, finalArgs)
+            }
+        }
+
+        /*
+        * 实现 call 方法
+        */
+        Function.prototype.myCall = function (context, ...args) {
+            context = context || window
+            // 保存调用 call 方法的目标函数到 context
+            context.fn = this
+            // 执行函数
+            let result = context.fn(...args)
+            delete context.fn
+            return result
+        }
+
+        /*
+        * 实现 apply 方法
+        */
+        Function.prototype.myApply = function (context, arr) {
+            context = context || window
+            // 保存调用 apply 方法的目标函数到 context
+            context.fn = this
+            // 执行函数
+            let result = context.fn(...arr)
+            delete context.fn
+            return result
+        }
+
+        const obj = {
+            nameA: '小熊',
+            age: 18
+        }
+        function fn (fromArea, toArea) {
+            console.log("姓名 " + this.nameA + ' 年龄 ' + this.age, " 来自" + fromArea + "去往" + toArea)
+        }
+
+        // 【this指向obj】
+        fn.myApply(obj, ['安徽', '上海'])
+        fn.myCall(obj, '安徽', '上海')
+        // bind 方法返回的是函数
+        fn.myBind(obj, '安徽')('上海') 
+
+    </script>
+</body>
+</html>

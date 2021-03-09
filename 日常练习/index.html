@@ -6,6 +6,88 @@
     <title>Document</title>
 </head>
 <body>
-    <script src="函数防抖节流.js"></script>
+    <script>
+        // console.log(a)
+        // console.log('a')
+        // var a = 12
+        // a.x = 2
+        // console.log(a.x)
+
+        // let arr = [
+        //     {
+        //         name: '123',
+        //         age: 21
+        //     },
+        //     {
+        //         name: '456',
+        //         age: 20
+        //     }
+        // ]
+
+        // let arr2 = arr.map(item => {
+        //     item.age = 18
+        //     // return item;
+        // })
+        // console.log('arr2---', arr2)
+
+        // 3.7.4.5.1.2.6
+
+        // setTimeout(function(){
+        //     console.log('1')
+        //     new Promise(function(resolve){
+        //         console.log('2');
+        //     })
+        // });
+        // new Promise(function(resolve){
+        //     console.log('3');
+        //     resolve("4");
+        // }).then(function(data){
+        //     console.log(data)
+        //     console.log('5')
+        // });
+        // setTimeout(function(){
+        //     console.log('6')
+        // });
+        // console.log('7');
+
+        // const arr = [1, 5, 7, 4, 15, 4, 7, 5, 1];
+        // const isPalindrome = arr => {
+        //    const { length: l } = arr;
+        //    const mid = Math.floor(l / 2);
+        //    for(let i = 0; i <= mid; i++){
+        //       if(arr[i] !== arr[l-i-1]){
+        //          return false;
+        //       };
+        //    };
+        //    return true;
+        // };
+        // console.log(isPalindrome(arr));
+
+        async function async1() {
+            console.log('async1 start');
+            await async2();
+            console.log('asnyc1 end');
+        }
+        async function async2() {
+            console.log('async2');
+        }
+        console.log('script start');
+        setTimeout(() => {
+            console.log('setTimeOut');
+        }, 0);
+        async1();
+        new Promise(function (reslove) {
+            console.log('promise1');
+            reslove();
+        }).then(function () {
+            console.log('promise2');
+        })
+        console.log('script end');
+
+
+    </script>
+    <!-- <script>
+        console.log('a')
+    </script> -->
 </body>
 </html>
